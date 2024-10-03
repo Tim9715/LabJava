@@ -1,6 +1,4 @@
-package Lab1;
-
-import Lab1.myfirstpackage.*;
+import myfirstpackage.*;
 
 public class MyFirstProgram {
     public static void main(String[] args) {
