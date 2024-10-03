@@ -1,4 +1,4 @@
-package myfirstpackage;
+package Lab1.myfirstpackage;
 
 public class MyFirstPackage {
     private int firstNumber;
