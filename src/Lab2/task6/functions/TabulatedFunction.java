@@ -8,40 +8,46 @@ public class TabulatedFunction {
     private FunctionPoint[] points;
     private int pointCount;
 
-public TabulatedFunction(double leftX, double rightX, int pointsCount) {
-    if (pointsCount < 2 || leftX >= rightX) {
-        throw new IllegalArgumentException("Некорректные границы или количество точек.");
+    public TabulatedFunction(double leftX, double rightX, int pointsCount) {
+        if (pointsCount < 2 || leftX >= rightX) {
+            throw new IllegalArgumentException("Некорректные границы или количество точек.");
+        }
+
+        points = new FunctionPoint[pointsCount];
+        pointCount = pointsCount;
+        double step = (rightX - leftX) / (pointsCount - 1);
+
+        for (int i = 0; i < pointsCount; i++) {
+            double x = leftX + i * step;
+            points[i] = new FunctionPoint(x, 0.0);
+        }
     }
 
-    points = new FunctionPoint[pointsCount];
-    pointCount = pointsCount;
-    double step = (rightX - leftX) / (pointsCount - 1);
+    public TabulatedFunction(double leftX, double rightX, double[] values) {
+        int pointsCount = values.length;
+        if (pointsCount < 2 || leftX >= rightX) {
+            throw new IllegalArgumentException("Некорректные границы или количество точек.");
+        }
 
-    for (int i = 0; i < pointsCount; i++) {
-        double x = leftX + i * step;
-        points[i] = new FunctionPoint(x, 0.0);
+        points = new FunctionPoint[pointsCount];
+        pointCount = pointsCount;
+        double step = (rightX - leftX) / (pointsCount - 1);
+
+        for (int i = 0; i < pointsCount; i++) {
+            double x = leftX + i * step;
+            points[i] = new FunctionPoint(x, values[i]);
+        }
     }
-}
-
-public TabulatedFunction(double leftX, double rightX, double[] values) {
-    int pointsCount = values.length;
-    if (pointsCount < 2 || leftX >= rightX) {
-        throw new IllegalArgumentException("Некорректные границы или количество точек.");
-    }
-
-    points = new FunctionPoint[pointsCount];
-    pointCount = pointsCount;
-    double step = (rightX - leftX) / (pointsCount - 1);
-
-    for (int i = 0; i < pointsCount; i++) {
-        double x = leftX + i * step;
-        points[i] = new FunctionPoint(x, values[i]);
-    }
-}
-
 
     public int getPointsCount() {
         return pointCount;
+    }
+
+    public FunctionPoint getPoint(int index) {
+        if (index < 0 || index >= pointCount) {
+            throw new IndexOutOfBoundsException("Некорректный индекс.");
+        }
+        return points[index];
     }
 
     public void deletePoint(int index) {
@@ -87,8 +93,8 @@ public TabulatedFunction(double leftX, double rightX, double[] values) {
             throw new IndexOutOfBoundsException("Некорректный индекс.");
         }
 
-        if (index > 0 && x <= points[index - 1].getX() ||
-            index < pointCount - 1 && x >= points[index + 1].getX()) {
+        if ((index > 0 && x <= points[index - 1].getX()) ||
+            (index < pointCount - 1 && x >= points[index + 1].getX())) {
             throw new IllegalArgumentException("Нарушение порядка точек по x.");
         }
 
@@ -96,7 +102,7 @@ public TabulatedFunction(double leftX, double rightX, double[] values) {
     }
 
     public double getPointY(int index) {
-    if (index < 0 || index >= pointCount) {
+        if (index < 0 || index >= pointCount) {
             throw new IndexOutOfBoundsException("Некорректный индекс.");
         }
         return points[index].getY();
@@ -117,34 +123,34 @@ public TabulatedFunction(double leftX, double rightX, double[] values) {
         return points[pointCount - 1].getX();
     }
 
-public double getFunctionValue(double x) {
-    if (x < getLeftDomainBorder() || x > getRightDomainBorder()) {
-        return Double.NaN;
-    }
-
-    for (FunctionPoint point : points) {
-        if (point != null && point.getX() == x) {
-            return point.getY();
+    public double getFunctionValue(double x) {
+        if (x < getLeftDomainBorder() || x > getRightDomainBorder()) {
+            return Double.NaN;
         }
-    }
 
-    for (int i = 0; i < pointCount - 1; i++) {
-        FunctionPoint p1 = points[i];
-        FunctionPoint p2 = points[i + 1];
-
-        if (p1 != null && p2 != null) {
-            double x1 = p1.getX();
-            double y1 = p1.getY();
-            double x2 = p2.getX();
-            double y2 = p2.getY();
-
-            if (x > x1 && x < x2) {
-                return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+        for (FunctionPoint point : points) {
+            if (point != null && point.getX() == x) {
+                return point.getY();
             }
         }
+
+        for (int i = 0; i < pointCount - 1; i++) {
+            FunctionPoint p1 = points[i];
+            FunctionPoint p2 = points[i + 1];
+
+            if (p1 != null && p2 != null) {
+                double x1 = p1.getX();
+                double y1 = p1.getY();
+                double x2 = p2.getX();
+                double y2 = p2.getY();
+
+                if (x > x1 && x < x2) {
+                    return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+                }
+            }
+        }
+        return Double.NaN;
     }
-    return Double.NaN;
-}
 
     @Override
     public String toString() {

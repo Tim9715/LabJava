@@ -1,35 +1,62 @@
-package Lab2.task7;
+package Lab2.task6;
 
 import Lab2.task2.functions.FunctionPoint;
-import Lab2.task6.functions.*;
+import Lab2.task6.functions.TabulatedFunction;
 
 public class Main {
     public static void main(String[] args) {
-        double leftX = -2;
-        double rightX = 2;
-        int pointsCount = 5;
-        double[] values = new double[] {4, 1, 0, 1, 4};
-        TabulatedFunction function = new TabulatedFunction(leftX, rightX, values);
+        // Создание функции с границами -2 и 2, содержащей 5 точек с нулевыми значениями
+        TabulatedFunction func = new TabulatedFunction(-2, 2, 5);
+        System.out.println("Исходная табулированная функция:");
+        printPoints(func);
 
-        System.out.println("Табулированные точки функции y = x^2:");
-        System.out.println(function);
-        System.out.println("Значения функции в точках:");
-        double[] testPoints = {-3, -2, -1.5, 0, 1.5, 2, 3};
-        for (double x : testPoints) {
-            System.out.printf("f(%.1f) = %.2f%n", x, function.getFunctionValue(x));
+        // Создание функции с границами -2 и 2 и значениями для точек
+        double[] values = {4, 1, 0, 1, 4};
+        TabulatedFunction funcWithValues = new TabulatedFunction(-2, 2, values);
+        System.out.println("\nФункция с заданными значениями:");
+        printPoints(funcWithValues);
+
+        // Добавление новой точки и вывод до и после
+        System.out.println("\nДобавление новой точки (1.5, 2.5):");
+        System.out.println("До добавления:");
+        printPoints(funcWithValues);
+
+        funcWithValues.addPoint(new FunctionPoint(1.5, 2.5));
+
+        System.out.println("После добавления:");
+        printPoints(funcWithValues);
+
+        // Удаление точки и вывод до и после
+        System.out.println("\nУдаление точки с индексом 2:");
+        System.out.println("До удаления:");
+        printPoints(funcWithValues);
+
+        funcWithValues.deletePoint(2);
+
+        System.out.println("После удаления:");
+        printPoints(funcWithValues);
+
+        // Изменение значений X и Y точки и вывод до и после
+        System.out.println("\nИзменение значения X и Y точки с индексом 1:");
+        System.out.println("До изменения:");
+        printPoints(funcWithValues);
+
+        try {
+            funcWithValues.setPointX(1, -1);  // Попытка изменить x на корректное значение
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка при установке x: " + e.getMessage());
         }
-        System.out.println("\nИзменение ординаты точки с индексом 2 (точка (0; 0)) на (0; 2):");
-        function.setPointY(2, 2);
-        System.out.println(function);
-        System.out.println("Добавление новой точки (-1.5, 2.25):");
-        function.addPoint(new FunctionPoint(-1.5, 2.25));
-        System.out.println(function);
-        System.out.println("Удаление точки с индексом 1:");
-        function.deletePoint(1);
-        System.out.println(function);
-        System.out.println("Значения функции в точках после изменений:");
-        for (double x : testPoints) {
-            System.out.printf("f(%.1f) = %.2f%n", x, function.getFunctionValue(x));
+
+        funcWithValues.setPointY(1, 10);  // Корректное изменение значения y
+
+        System.out.println("После изменения:");
+        printPoints(funcWithValues);
+    }
+
+    // Вспомогательный метод для печати всех точек функции через getPoint()
+    private static void printPoints(TabulatedFunction function) {
+        for (int i = 0; i < function.getPointsCount(); i++) {
+            System.out.println("Точка " + i + ": " + function.getPoint(i));
         }
     }
 }
