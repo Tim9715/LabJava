@@ -1,4 +1,4 @@
-package Lab2.task2.functions;
+package Lab2.functions;
 
 public class FunctionPoint {
     private double x;
